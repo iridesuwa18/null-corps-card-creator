@@ -288,7 +288,7 @@
       id: 29, name: 'Card Effect Description', type: 'text',
       value: (s) => s.cardEffect || '',
       x: 135.0, y: 2550.0,
-      font: 'Archivo ExtraCondensed Light', size: 25,
+      font: 'Archivo ExtraCondensed Light', size: 23,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 3,
       align: 'center', baseline: 'middle',
       confined: true,
