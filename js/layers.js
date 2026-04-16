@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 227.5, y: 29.0,
+      x: 225.5, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
