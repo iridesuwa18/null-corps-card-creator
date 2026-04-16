@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 184.5, y: 29.0,
+      x: 194.5, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -126,7 +126,7 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 2042.7, y: 29.0,
+      x: 2037.7, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -261,7 +261,7 @@
     {
       id: 27, name: 'Card Title Text', type: 'text',
       value: (s) => s.cardTitle || '',
-      x: 475.0, y: 2385.0,
+      x: 475.0, y: 2375.0,
       font: 'TGL Engschrift', size: 31,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'center', baseline: 'middle',
