@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 224.5, y: 29.0,
+      x: 184.5, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -126,7 +126,7 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 2022.7, y: 29.0,
+      x: 2042.7, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -148,7 +148,7 @@
     {
       id: 14, name: 'SHD Stat', type: 'text',
       value: (s) => String(s.shd ?? ''),
-      x: 1475.5, y: 2885.0,
+      x: 1480.5, y: 2885.0,
       font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -159,7 +159,7 @@
     {
       id: 15, name: 'Energy Stat', type: 'text',
       value: (s) => String(s.energy ?? ''),
-      x: 1125.4, y: 94.0,
+      x: 1125.4, y: 96.0,
       font: 'TGL Engschrift', size: 67,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'center', baseline: 'top',
@@ -239,7 +239,7 @@
     {
       id: 25, name: 'Zone Indicator', type: 'text',
       value: (s) => s.zone || '',
-      x: 234.7, y: 408.0,
+      x: 234.7, y: 414.0,
       font: 'TGL Engschrift', size: 72,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'center', baseline: 'top',
