@@ -93,8 +93,8 @@
     {
       id: 9, name: 'Null Corps (game name)', type: 'text',
       value: (s) => s.gameName || 'Null Corps',
-      x: 129, y: 3074.5,
-      font: 'TGL Engschrift', size: 13,
+      x: 127, y: 3072.5,
+      font: 'TGL Engschrift', size: 12,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
       confined: false,
@@ -104,8 +104,8 @@
     {
       id: 10, name: 'Unique Card Number', type: 'text',
       value: (s) => s.uniqueNumber || '',
-      x: 2119, y: 3074.5,
-      font: 'TGL Engschrift', size: 13,
+      x: 2121, y: 3072.5,
+      font: 'TGL Engschrift', size: 12,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
       confined: false,
@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 294.5, y: 29.0,
+      x: 274.5, y: 29.0,
       font: 'TGL Engschrift', size: 67,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -126,7 +126,7 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 1932.7, y: 29.0,
+      x: 1962.7, y: 29.0,
       font: 'TGL Engschrift', size: 67,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -137,7 +137,7 @@
     {
       id: 13, name: 'HP Stat', type: 'text',
       value: (s) => String(s.hp ?? ''),
-      x: 891.3, y: 2900.0,
+      x: 841.3, y: 2890.0,
       font: 'TGL Engschrift', size: 41,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -148,7 +148,7 @@
     {
       id: 14, name: 'SHD Stat', type: 'text',
       value: (s) => String(s.shd ?? ''),
-      x: 1419.5, y: 2900.0,
+      x: 1469.5, y: 2890.0,
       font: 'TGL Engschrift', size: 41,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'right', baseline: 'top',
