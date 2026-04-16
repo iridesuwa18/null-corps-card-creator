@@ -115,8 +115,8 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 274.5, y: 29.0,
-      font: 'TGL Engschrift', size: 67,
+      x: 244.5, y: 29.0,
+      font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
       confined: false,
@@ -126,8 +126,8 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 1962.7, y: 29.0,
-      font: 'TGL Engschrift', size: 67,
+      x: 2012.7, y: 29.0,
+      font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
       confined: false,
@@ -137,8 +137,8 @@
     {
       id: 13, name: 'HP Stat', type: 'text',
       value: (s) => String(s.hp ?? ''),
-      x: 841.3, y: 2890.0,
-      font: 'TGL Engschrift', size: 41,
+      x: 791.3, y: 2885.0,
+      font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'left', baseline: 'top',
       confined: false,
@@ -148,8 +148,8 @@
     {
       id: 14, name: 'SHD Stat', type: 'text',
       value: (s) => String(s.shd ?? ''),
-      x: 1469.5, y: 2890.0,
-      font: 'TGL Engschrift', size: 41,
+      x: 1469.5, y: 2885.0,
+      font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'right', baseline: 'top',
       confined: false,
