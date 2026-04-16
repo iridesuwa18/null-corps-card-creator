@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 194.5, y: 29.0,
+      x: 214.5, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -126,7 +126,7 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 2037.7, y: 29.0,
+      x: 2031.7, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -287,7 +287,7 @@
     {
       id: 29, name: 'Card Effect Description', type: 'text',
       value: (s) => s.cardEffect || '',
-      x: 135.0, y: 2570.0,
+      x: 135.0, y: 2560.0,
       font: 'Archivo ExtraCondensed Light', size: 23,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 3,
       align: 'center', baseline: 'middle',
