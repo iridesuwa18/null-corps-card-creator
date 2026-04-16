@@ -115,7 +115,7 @@
     {
       id: 11, name: 'ATK Stat', type: 'text',
       value: (s) => String(s.atk ?? ''),
-      x: 229.5, y: 29.0,
+      x: 227.5, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -126,7 +126,7 @@
     {
       id: 12, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 2024.7, y: 29.0,
+      x: 2027.7, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -137,7 +137,7 @@
     {
       id: 13, name: 'HP Stat', type: 'text',
       value: (s) => String(s.hp ?? ''),
-      x: 791.3, y: 2885.0,
+      x: 791.3, y: 2884.0,
       font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -148,7 +148,7 @@
     {
       id: 14, name: 'SHD Stat', type: 'text',
       value: (s) => String(s.shd ?? ''),
-      x: 1478.5, y: 2885.0,
+      x: 1476.5, y: 2884.0,
       font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'right', baseline: 'top',
@@ -287,13 +287,13 @@
     {
       id: 29, name: 'Card Effect Description', type: 'text',
       value: (s) => s.cardEffect || '',
-      x: 135.0, y: 2544.0,
+      x: 135.0, y: 2550.0,
       font: 'Archivo ExtraCondensed Light', size: 23,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 3,
       align: 'center', baseline: 'middle',
       confined: true,
       confinedW: 1980.0,
-      confinedH: 283.0,
+      confinedH: 290.0,
       richText: true,  // enables \n → <br> and [[bold:text]], [[large:text]], [[font:name:text]]
       showBounds: true,
       richTextEditor: true,  // enables Photoshop-style font selector UI
