@@ -394,7 +394,7 @@
       value: (s) => s.cardEffect || '',
       x: 135.0, y: 2550.0,
       font: 'Archivo ExtraCondensed Light', size: 23,
-      color: '#000000', outlineColor: '#ffffff', outlineWidth: 7,
+      color: '#000000', outlineColor: '#ffffff', outlineWidth: 2,
       align: 'center', baseline: 'middle',
       confined: true,
       confinedW: 1980.0,
