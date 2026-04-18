@@ -1,0 +1,1014 @@
+/* ═══════════════════════════════════════════════════════════════
+   NULL CORPS CARD EDITOR — styles.css
+   Part 1: App Shell & Responsive Layout
+   ─────────────────────────────────────────────────────────────
+   Aesthetic: Dark industrial/utilitarian with sharp data-terminal
+   energy. Monospaced accents, grid discipline, controlled density.
+   The card is always the hero — everything else recedes.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── @font-face ── */
+@font-face {
+  font-family: 'TGL Engschrift';
+  src: url('fonts/TGL0-1451Engschrift.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('fonts/Archivo-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('fonts/ArchivoExtraCondensed-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-stretch: extra-condensed;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Unique alias used by Canvas 2D (ctx.font has no font-stretch support,
+   so we register the condensed file under its own family name instead) */
+@font-face {
+  font-family: 'ArchivoCondLight';
+  src: url('fonts/ArchivoExtraCondensed-Light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design Tokens ── */
+:root {
+  /* Palette */
+  --c-bg:           #0e0e0f;
+  --c-bg-panel:     #141416;
+  --c-bg-section:   #1a1a1d;
+  --c-bg-input:     #111113;
+  --c-border:       #2a2a2f;
+  --c-border-focus: #555566;
+  --c-accent:       #c8ff00;        /* sharp chartreuse — the one pop */
+  --c-accent-dim:   rgba(200,255,0,0.12);
+  --c-text-primary: #e8e8ec;
+  --c-text-label:   #8888a0;
+  --c-text-hint:    #555568;
+  --c-text-accent:  #c8ff00;
+
+  /* Layout */
+  --settings-width:        340px;   /* desktop: fixed settings column width */
+  --settings-min-width:    280px;
+  --settings-max-width:    400px;
+  --card-min-size:         240px;   /* smallest the card preview will shrink to */
+  --panel-pad:             20px;
+  --section-gap:           20px;
+  --field-gap:             10px;
+
+  /* Card canvas intrinsic ratio */
+  --card-w:                2250;
+  --card-h:                3150;
+  --card-ratio:            calc(2250 / 3150); /* ~0.7143 */
+
+  /* Typography */
+  --font-ui:        'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:      'Courier New', 'Consolas', monospace;
+  --font-tgl:       'TGL Engschrift', 'Archivo', sans-serif;
+
+  /* Misc */
+  --radius:         4px;
+  --transition:     0.15s ease;
+  --scrollbar-w:    6px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  height: 100%;
+  background: var(--c-bg);
+  color: var(--c-text-primary);
+  font-family: var(--font-ui);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden; /* body never scrolls; only #settings-inner scrolls */
+}
+
+/* ═══════════════════════════════════════════════════
+   APP SHELL — #app
+   Desktop/Landscape: flex row, 100vh, no overflow
+   Mobile/Portrait:   flex column, auto height
+═══════════════════════════════════════════════════ */
+#app {
+  display: flex;
+  flex-direction: row;
+  height: 100dvh;          /* dynamic viewport height — handles mobile chrome */
+  width: 100%;
+  overflow: visible;
+}
+
+/* ═══════════════════════════════════════════════════
+   CARD PANEL — left column (desktop) / top (mobile)
+═══════════════════════════════════════════════════ */
+#card-panel {
+  flex: 1 1 auto;
+  min-width: var(--card-min-size);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--panel-pad);
+  gap: 12px;
+  background: var(--c-bg);
+  position: relative;
+  overflow: visible;
+
+  /* subtle crosshatch grid background — adds depth without distraction */
+  background-image:
+    linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── Card Viewport: scales to fill available panel space ── */
+#card-viewport {
+  /* Intrinsic card size: 2250 × 3150 px (ratio 5:7) */
+  width: 100%;
+  max-width: calc(100% - 0px);
+  aspect-ratio: 2250 / 3150;
+  position: relative;
+
+  /* Cap so the card never overflows the panel */
+  max-height: calc(100dvh - 80px);    /* leave room for panel label */
+
+  /* Center within panel */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Allow panned/zoomed card to bleed over adjacent panels (Feature 3) */
+  overflow: visible;
+
+  /* Suppress browser pan/zoom interference on touch — lets JS handle it cleanly */
+  touch-action: none;
+}
+
+/* ── Card Stage: the actual 2250×3150 canvas, CSS-scaled to fit viewport ── */
+#card-stage {
+  /* Always 2250×3150 internally; CSS transform scale brings it to screen size.
+     js/layers.js reads #card-viewport dimensions and sets the scale on #card-stage. */
+  width:  2250px;
+  height: 3150px;
+  position: relative;           /* layers.js children are position:absolute */
+  transform-origin: top left;
+  /* transform: scale(...) injected by js/layers.js on init + resize */
+
+  /* Placeholder background so the card outline is visible before PNGs load */
+  background: #1a1a1f;
+  border: 1px solid var(--c-border);
+
+  /* Prevent text selection on drag */
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* GPU compositing hint — smooth zoom/pan on mobile (Feature 3, 6.2.6) */
+  will-change: transform;
+}
+
+
+/* ── Card Panel Actions (Export PNG button row) — Feature 4 ── */
+#card-panel-actions {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 6px 0 2px;
+  width: 100%;
+}
+
+.btn-export {
+  background: transparent;
+  color: var(--c-accent);
+  border: 1px solid var(--c-accent);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-export:hover {
+  background: var(--c-accent);
+  color: #0e0e0f;
+}
+
+.btn-export:active {
+  background: #aad900;
+  border-color: #aad900;
+  color: #0e0e0f;
+}
+
+.btn-export:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+/* ── Layers Button (Feature 5) ── */
+.btn-layers {
+  background: transparent;
+  color: var(--c-text-label);
+  border: 1px solid var(--c-border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-layers:hover {
+  border-color: var(--c-border-focus);
+  color: var(--c-text-primary);
+}
+
+.btn-layers[aria-expanded="true"] {
+  background: var(--c-bg-section);
+  border-color: var(--c-border-focus);
+  color: var(--c-text-primary);
+}
+
+/* ── Settings Toggle Button ── */
+.btn-settings-toggle {
+  background: transparent;
+  color: var(--c-text-label);
+  border: 1px solid var(--c-border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  min-width: 44px;
+  min-height: 44px;
+}
+.btn-settings-toggle:hover {
+  border-color: var(--c-border-focus);
+  color: var(--c-text-primary);
+}
+#app.settings-collapsed .btn-settings-toggle {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+/* ── Layer Visibility — Fullscreen Modal (Feature 5) ── */
+/* Covers the entire viewport; close button dismisses it. */
+.layer-menu-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--c-bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layer-menu-modal.hidden {
+  display: none;
+}
+
+.layer-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--c-accent-dim);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.layer-menu-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-text-accent);
+}
+
+.layer-menu-close-btn {
+  background: transparent;
+  color: var(--c-text-label);
+  border: 1px solid var(--c-border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  transition: color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.layer-menu-close-btn:hover {
+  color: var(--c-text-primary);
+  border-color: var(--c-border-focus);
+}
+
+.layer-menu-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  padding: 6px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.layer-menu-list::-webkit-scrollbar { width: 4px; }
+.layer-menu-list::-webkit-scrollbar-track { background: transparent; }
+.layer-menu-list::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+.layer-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  min-height: 48px;
+  transition: background 0.1s;
+}
+
+.layer-menu-item:hover {
+  background: var(--c-bg-section);
+}
+
+.layer-eye-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 1;
+  transition: opacity 0.15s, background 0.15s;
+  flex-shrink: 0;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layer-eye-btn:hover {
+  background: var(--c-bg-input);
+}
+
+.layer-eye-btn.layer-hidden {
+  opacity: 0.35;
+}
+
+.layer-name {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--c-text-primary);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  transition: color 0.15s;
+}
+
+.layer-item-hidden .layer-name {
+  color: var(--c-text-hint);
+  text-decoration: line-through;
+}
+
+/* ── Card Panel Footer Label ── */
+#card-panel-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c-text-hint);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.label-game   { color: var(--c-text-accent); }
+.label-sep    { color: var(--c-border); }
+.label-tool   { color: var(--c-text-hint); }
+
+/* ═══════════════════════════════════════════════════
+   SETTINGS PANEL — right column (desktop) / bottom (mobile)
+═══════════════════════════════════════════════════ */
+#settings-panel {
+  flex: 0 0 var(--settings-width);
+  min-width: var(--settings-min-width);
+  max-width: var(--settings-max-width);
+  height: 100%;
+
+  /* This element clips; its child scrolls */
+  overflow: hidden;
+
+  background: var(--c-bg-panel);
+  border-left: 1px solid var(--c-border);
+
+  display: flex;
+  flex-direction: column;
+
+  /* Sit above the card stage so zoomed card passes behind the settings panel */
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Settings Inner: the scrollable region ── */
+#settings-inner {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--panel-pad);
+  padding-bottom: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+/* Thin custom scrollbar */
+#settings-inner::-webkit-scrollbar {
+  width: var(--scrollbar-w);
+}
+#settings-inner::-webkit-scrollbar-track {
+  background: var(--c-bg-panel);
+}
+#settings-inner::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: 3px;
+}
+#settings-inner::-webkit-scrollbar-thumb:hover {
+  background: var(--c-border-focus);
+}
+
+/* ── Settings Header ── */
+#settings-header {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+
+#settings-header h1 {
+  font-family: var(--font-tgl);
+  font-size: 22px;
+  font-weight: normal;
+  letter-spacing: 0.05em;
+  color: var(--c-text-primary);
+  line-height: 1.1;
+}
+
+#settings-subtitle {
+  font-size: 11px;
+  color: var(--c-text-hint);
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════════
+   SETTINGS SECTIONS
+═══════════════════════════════════════════════════ */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--field-gap);
+}
+
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-text-accent);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--c-accent-dim);
+  margin-bottom: 2px;
+}
+
+/* ── Field Groups ── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* ── Labels ── */
+label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  color: var(--c-text-label);
+  text-transform: uppercase;
+}
+
+/* ── Inputs, Selects, Textareas ── */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  background: var(--c-bg-input);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--c-border-focus);
+  box-shadow: 0 0 0 2px rgba(200,255,0,0.06);
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+textarea::placeholder {
+  color: var(--c-text-hint);
+}
+
+/* Number inputs: hide default spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Select: custom arrow */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+select option {
+  background: var(--c-bg-panel);
+  color: var(--c-text-primary);
+}
+
+select optgroup {
+  color: var(--c-text-label);
+  font-style: normal;
+  font-size: 11px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+/* ── Field Hints ── */
+.field-hint {
+  font-size: 10px;
+  color: var(--c-text-hint);
+  line-height: 1.4;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.section-hint {
+  margin-top: -4px;
+  margin-bottom: 2px;
+}
+
+/* ── Input + Button Row ── */
+.input-btn-row {
+  display: flex;
+  gap: 6px;
+}
+
+.input-btn-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.input-btn-row .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* ── Button Row ── */
+.button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition), border-color var(--transition),
+              color var(--transition);
+  user-select: none;
+  white-space: nowrap;
+  /* 6.2.4: minimum tap target for mobile (Apple/Google guidelines) */
+  min-height: 44px;
+  min-width: 44px;
+  /* prevent 300ms tap delay on mobile */
+  touch-action: manipulation;
+}
+
+.btn-primary {
+  background: var(--c-accent);
+  color: #0e0e0f;
+  border-color: var(--c-accent);
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background: #d4ff1a;
+  border-color: #d4ff1a;
+}
+
+.btn-primary:active {
+  background: #aad900;
+  border-color: #aad900;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--c-text-label);
+  border-color: var(--c-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--c-border-focus);
+  color: var(--c-text-primary);
+}
+
+.btn-secondary:active {
+  background: var(--c-bg-section);
+}
+
+/* Ghost button — subtle, used for destructive/clear actions */
+.btn-ghost {
+  background: transparent;
+  color: var(--c-text-hint);
+  border-color: transparent;
+  font-size: 10px;
+  padding: 5px 8px;
+}
+
+.btn-ghost:hover {
+  color: #ff5555;
+  border-color: #ff5555;
+}
+
+/* ── Card Art Upload Row ── */
+.card-art-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Style the <label> to look like a btn-secondary */
+.card-art-label {
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.card-art-filename {
+  flex: 1 1 auto;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--c-text-hint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* ── Crossword Placeholder ── */
+.crossword-placeholder {
+  font-size: 12px;
+  color: var(--c-text-hint);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* ── Settings Footer ── */
+#settings-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-border);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--c-text-hint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-sep {
+  color: var(--c-border);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ─────────────────────────────────────────────────
+   Portrait / Mobile: card-panel on TOP, settings below.
+   The split is at 600px wide OR portrait orientation.
+═══════════════════════════════════════════════════ */
+
+/* Portrait mode: switch to column layout */
+@media (orientation: portrait), (max-width: 600px) {
+
+  body {
+    overflow: hidden;   /* body still doesn't scroll */
+  }
+
+  #app {
+    flex-direction: column;
+    height: 100dvh;
+    overflow: visible;
+  }
+
+  /* ── Card panel: top section — height driven by the flex split ── */
+  #card-panel {
+    flex: 0 0 45dvh;
+    width: 100%;
+    min-height: 0;
+    padding: 10px 10px 6px;
+    gap: 6px;
+    /* Override desktop justify-content:center so children stack from top.
+       Viewport gets flex:1 1 auto so it absorbs all leftover space after
+       the actions bar and label — no hard-coded max-height needed. */
+    justify-content: flex-start;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  /* ── Card viewport: fills whatever height is left after actions + label ── */
+  /* The critical fix: flex:1 1 auto + min-height:0 lets the viewport shrink
+     to whatever space the flex algorithm assigns. aspect-ratio then derives
+     the width from that height. No max-height is needed. */
+  #card-viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: auto;
+    max-width: 100%;
+    max-height: none;
+    height: auto;
+    aspect-ratio: 2250 / 3150;
+    align-self: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Actions bar: solid block above the card ── */
+  #card-panel-actions {
+    flex-shrink: 0;
+    gap: 6px;
+    position: relative;
+    z-index: 20;
+    background: var(--c-bg);
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  /* ── Label bar: solid block above the card ── */
+  #card-panel-label {
+    position: relative;
+    z-index: 20;
+    background: var(--c-bg);
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 6px;
+  }
+
+  /* ── Settings panel: bottom section, scrollable ── */
+  #settings-panel {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    border-left: none;
+    border-top: 1px solid var(--c-border);
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+  }
+
+  #settings-inner {
+    padding: 14px 16px;
+    padding-bottom: 40px; /* extra bottom breathing room on mobile */
+  }
+
+  /* ── Settings-collapsed state ──
+     Card panel grows to fill all space; settings hidden. ── */
+  #app.settings-collapsed #card-panel {
+    flex: 1 1 auto;
+    height: auto;
+    border-bottom: none;
+  }
+
+  #app.settings-collapsed #settings-panel {
+    display: none;
+  }
+
+  /* Slightly smaller type on mobile */
+  #settings-header h1 {
+    font-size: 18px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr 1fr;  /* keep 2-col on wide enough phones */
+  }
+
+  .btn {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}
+
+/* Extra small: single column field rows */
+@media (max-width: 360px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Very wide landscape: prevent settings panel from getting too wide ── */
+@media (min-width: 1200px) {
+  #settings-panel {
+    flex: 0 0 380px;
+    max-width: 380px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   LAYER SLOTS — used by js/layers.js
+   (Part 2 will inject these; defined here for layout
+   correctness so nothing shifts on load)
+═══════════════════════════════════════════════════ */
+
+/* Each layer is absolutely positioned at 0,0 on the 2250×3150 canvas */
+.nc-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:  2250px;
+  height: 3150px;
+  pointer-events: none;   /* layers don't capture mouse; only bounding-box UI does */
+}
+
+/* PNG layers: img elements */
+.nc-layer-png {
+  display: block;
+  width:  2250px;
+  height: 3150px;
+  object-fit: contain;
+}
+
+/* Text layers: absolute spans, raw pixel coordinates from spec */
+.nc-layer-text {
+  position: absolute;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Crossword bounding box UI (js/crossword.js) */
+.nc-crossword-bbox {
+  position: absolute;
+  cursor: move;
+  pointer-events: all;    /* this one does capture mouse */
+  touch-action: none;
+}
+
+/* ── Utility ── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD MODE SELECTOR — btn-mode-row
+   Segmented button row for Territory / Dreamscape / Event /
+   No-Territory mode selection (Section 1 of settings panel).
+═══════════════════════════════════════════════════════════════ */
+
+.btn-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.btn-mode {
+  flex: 1 1 auto;
+  min-width: 80px;
+  padding: 6px 10px;
+  font-family: var(--font-ui, 'TGL Engschrift', Arial, sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--c-bg-input, #111113);
+  color: var(--c-text-label, #8888a0);
+  border: 1px solid var(--c-border, #2a2a2f);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-mode:hover {
+  background: rgba(200, 255, 0, 0.07);
+  color: var(--c-text-primary, #e8e8ec);
+  border-color: var(--c-border-focus, #555566);
+}
+
+.btn-mode.active {
+  background: var(--c-accent-dim, rgba(200,255,0,0.12));
+  color: var(--c-accent, #c8ff00);
+  border-color: var(--c-accent, #c8ff00);
+  font-weight: 600;
+}
+
+/* Dreamscape — soft purple tint when active */
+.btn-mode.active[data-mode="dreamscape"] {
+  background: rgba(180, 100, 255, 0.13);
+  color: #c89dff;
+  border-color: #c89dff;
+}
+
+/* Event — warm amber tint when active */
+.btn-mode.active[data-mode="event"] {
+  background: rgba(255, 180, 40, 0.13);
+  color: #ffcc55;
+  border-color: #ffcc55;
+}
+
+/* No Territory — neutral slate tint when active */
+.btn-mode.active[data-mode="no-territory"] {
+  background: rgba(140, 140, 160, 0.13);
+  color: #aaaacc;
+  border-color: #aaaacc;
+}
