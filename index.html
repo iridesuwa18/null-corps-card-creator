@@ -121,6 +121,44 @@
               <input type="text" id="card-type" placeholder="e.g. Character" />
             </div>
           </div>
+
+          <!-- ── Territory Symbol Position & Size ── -->
+          <div class="field-group" style="margin-top:10px;">
+            <label style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text-label,#8888a0);">Territory Symbol</label>
+            <div class="field-row" style="margin-top:4px;">
+              <div class="field-group">
+                <label for="territory-symbol-x">X</label>
+                <input type="number" id="territory-symbol-x" placeholder="172" step="1" />
+              </div>
+              <div class="field-group">
+                <label for="territory-symbol-y">Y</label>
+                <input type="number" id="territory-symbol-y" placeholder="911" step="1" />
+              </div>
+              <div class="field-group">
+                <label for="territory-symbol-size">Size (px)</label>
+                <input type="number" id="territory-symbol-size" placeholder="auto" min="10" step="1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Energy Symbol Position & Size ── -->
+          <div class="field-group">
+            <label style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text-label,#8888a0);">Energy Symbol</label>
+            <div class="field-row" style="margin-top:4px;">
+              <div class="field-group">
+                <label for="energy-symbol-x">X</label>
+                <input type="number" id="energy-symbol-x" placeholder="2021" step="1" />
+              </div>
+              <div class="field-group">
+                <label for="energy-symbol-y">Y</label>
+                <input type="number" id="energy-symbol-y" placeholder="532" step="1" />
+              </div>
+              <div class="field-group">
+                <label for="energy-symbol-size">Size (px)</label>
+                <input type="number" id="energy-symbol-size" placeholder="auto" min="10" step="1" />
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- ══════════════════════════════════════════
@@ -429,6 +467,13 @@
         tileImageUrl: '',
         cardArtDataUrl: '',
         layerVisibility: {},  // Feature 5: { layerId: true/false } — missing = visible
+        // Symbol position & size overrides (null = use layer default)
+        territorySymbolX: null,
+        territorySymbolY: null,
+        territorySymbolSize: null,
+        energySymbolX: null,
+        energySymbolY: null,
+        energySymbolSize: null,
       },
       // Module references — filled in by each JS file
       layers: null,       // js/layers.js
