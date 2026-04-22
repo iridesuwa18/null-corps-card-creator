@@ -54,6 +54,13 @@
     { id: 'tile-image-url',  stateKey: 'tileImageUrl',   type: 'text'   },
     /* Zone indicator is wired by territories.js -- we still sync state here on manual edit */
     { id: 'zone-indicator',  stateKey: 'zone',           type: 'text'   },
+    /* Symbol position & size */
+    { id: 'territory-symbol-x',    stateKey: 'territorySymbolX',    type: 'number' },
+    { id: 'territory-symbol-y',    stateKey: 'territorySymbolY',    type: 'number' },
+    { id: 'territory-symbol-size', stateKey: 'territorySymbolSize', type: 'number' },
+    { id: 'energy-symbol-x',       stateKey: 'energySymbolX',       type: 'number' },
+    { id: 'energy-symbol-y',       stateKey: 'energySymbolY',       type: 'number' },
+    { id: 'energy-symbol-size',    stateKey: 'energySymbolSize',    type: 'number' },
   ];
 
   /* ==============================================================
@@ -569,4 +576,3 @@
   }
 
 })();
-
