@@ -980,6 +980,24 @@
       };
       el.src = url;
     }
+
+    // ── Symbol position/size overrides (Layers 30 & 31) ──────────────
+    if (def.id === 30 || def.id === 31) {
+      const isTerritory = def.id === 30;
+      const xKey    = isTerritory ? 'territorySymbolX'    : 'energySymbolX';
+      const yKey    = isTerritory ? 'territorySymbolY'    : 'energySymbolY';
+      const sizeKey = isTerritory ? 'territorySymbolSize' : 'energySymbolSize';
+
+      const x    = (state[xKey]    != null && state[xKey]    !== '') ? Number(state[xKey])    : def.x;
+      const y    = (state[yKey]    != null && state[yKey]    !== '') ? Number(state[yKey])    : def.y;
+      const size = (state[sizeKey] != null && state[sizeKey] !== '') ? Number(state[sizeKey]) : null;
+
+      el.style.left   = x + 'px';
+      el.style.top    = y + 'px';
+      el.style.width  = size ? size + 'px' : 'auto';
+      el.style.height = size ? size + 'px' : 'auto';
+      el.style.transform = '';
+    }
   }
 
   function _renderText(el, def, state) {
