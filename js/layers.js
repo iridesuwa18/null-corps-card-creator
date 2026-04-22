@@ -421,7 +421,7 @@
         // Default: territory
         return s.territory ? `${_territorySlug(s.territory)}_symbol.png` : '';
       },
-      x: 172.2, y: 910.7,
+      x: 90, y: 820, defaultSize: 130,
     },
 
     /* ── Layer 31: Energy Symbol (Dynamic — Main Energy) ── */
@@ -440,7 +440,7 @@
         if (mode === 'dozer') return 'dozer_symbol.png';
         return s.energyMain ? `${s.energyMain}_symbol.png` : '';
       },
-      x: 2021.2, y: 532.2,
+      x: 1900, y: 425, defaultSize: 240,
     },
 
     /* ── Layer 32: Church Stained Glass Frame (Static PNG) ── */
@@ -990,12 +990,14 @@
 
       const x    = (state[xKey]    != null && state[xKey]    !== '') ? Number(state[xKey])    : def.x;
       const y    = (state[yKey]    != null && state[yKey]    !== '') ? Number(state[yKey])    : def.y;
-      const size = (state[sizeKey] != null && state[sizeKey] !== '') ? Number(state[sizeKey]) : null;
+      const size = (state[sizeKey] != null && state[sizeKey] !== '') ? Number(state[sizeKey]) : (def.defaultSize || null);
 
-      el.style.left   = x + 'px';
-      el.style.top    = y + 'px';
-      el.style.width  = size ? size + 'px' : 'auto';
-      el.style.height = size ? size + 'px' : 'auto';
+      el.style.left      = x + 'px';
+      el.style.top       = y + 'px';
+      // Use height to drive size; width:auto preserves the image's natural aspect ratio
+      el.style.width     = 'auto';
+      el.style.height    = size ? size + 'px' : 'auto';
+      el.style.objectFit = 'unset';
       el.style.transform = '';
     }
   }
