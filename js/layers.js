@@ -229,7 +229,7 @@
     {
       id: 14, name: 'HP Stat', type: 'text',
       value: (s) => String(s.hp ?? ''),
-      x: 791.3, y: 2883.0,
+      x: 791.3, y: 2881.0,
       font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'left', baseline: 'top',
@@ -240,7 +240,7 @@
     {
       id: 15, name: 'SHD Stat', type: 'text',
       value: (s) => String(s.shd ?? ''),
-      x: 1476.5, y: 2883.0,
+      x: 1476.5, y: 2881.0,
       font: 'TGL Engschrift', size: 42,
       color: '#000000', outlineColor: '#ffffff', outlineWidth: 4,
       align: 'right', baseline: 'top',
