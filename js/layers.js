@@ -206,7 +206,7 @@
     {
       id: 13, name: 'DEF Stat', type: 'text',
       value: (s) => String(s.def ?? ''),
-      x: 2027.7, y: 29.0,
+      x: 2025.7, y: 29.0,
       font: 'TGL Engschrift', size: 69,
       color: '#ffffff', outlineColor: '#000000', outlineWidth: 4,
       align: 'right', baseline: 'top',
