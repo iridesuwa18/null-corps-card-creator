@@ -1051,12 +1051,10 @@
         const shiftX = def.id === 14
           ? (def.x - 120)   // HP: move left 120px
           : (def.x + 120);  // SHD: move right 120px
-        el.style.fontSize = '90px';
         el.style.left = shiftX + 'px';
         el.style.transform = 'translateX(-50%)';
         el.style.textAlign = 'center';
       } else {
-        el.style.fontSize = '126px';
         // Restore original position and alignment
         el.style.left = def.x + 'px';
         if (def.align === 'right') {
