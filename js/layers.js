@@ -1044,13 +1044,13 @@
     // For confined layers, write into the inner div so flex centering is preserved
     const target = el.querySelector('.confined-inner') || el;
 
-    // Char. Skill mode: HP (14) shifts left 55px, SHD (15) shifts right 55px,
+    // Char. Skill mode: HP (14) shifts left 200px, SHD (15) shifts right 200px,
     // both center-aligned. Restore defaults when switching away.
     if (def.id === 14 || def.id === 15) {
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
-          ? (def.x - 55)   // HP: move left 55px
-          : (def.x + 55);  // SHD: move right 55px
+          ? (def.x - 200)   // HP: move left 200px
+          : (def.x + 200);  // SHD: move right 200px
         el.style.left = shiftX + 'px';
         el.style.transform = 'translateX(-50%)';
         el.style.textAlign = 'center';
