@@ -77,6 +77,11 @@
       ? window.NullCorps.editor.getTextState()
       : {};
 
+    // hp and shd are text (Exchange Skill 1/2) in char-skill mode
+    const isCharSkill = (s.cardMode || textState.cardMode) === 'char-skill';
+    const hpVal  = textState.hp  !== undefined ? textState.hp  : s.hp;
+    const shdVal = textState.shd !== undefined ? textState.shd : s.shd;
+
     // Gather crossword bounding-box state
     const crosswordState = window.NullCorps.crossword
       ? window.NullCorps.crossword.getState()
@@ -94,8 +99,8 @@
       uniqueNumber:  textState.uniqueNumber  || s.uniqueNumber  || '',
       atk:           textState.atk           ?? s.atk           ?? 0,
       def:           textState.def           ?? s.def           ?? 0,
-      hp:            textState.hp            ?? s.hp            ?? 0,
-      shd:           textState.shd           ?? s.shd           ?? 0,
+      hp:            isCharSkill ? (hpVal  ?? '') : (hpVal  ?? 0),
+      shd:           isCharSkill ? (shdVal ?? '') : (shdVal ?? 0),
       energy:        textState.energy        ?? s.energy        ?? 0,
       cardEffect:    textState.cardEffect    || s.cardEffect    || '',
       creatorCredit: textState.creatorCredit || s.creatorCredit || 'iridesuwa',
@@ -156,6 +161,8 @@
     if (subtypeSel) subtypeSel.value = subtype;
 
     /* 2 · Text layers */
+    // In char-skill mode, hp/shd hold Exchange Skill text — preserve as-is
+    const snapIsCharSkill = (snap.cardMode || mode) === 'char-skill';
     const textSnap = {
       cardName:      snap.cardName      || '',
       cardTitle:     snap.cardTitle     || '',
@@ -165,8 +172,8 @@
       cardEffect:    snap.cardEffect    || '',
       atk:           snap.atk          ?? 0,
       def:           snap.def          ?? 0,
-      hp:            snap.hp           ?? 0,
-      shd:           snap.shd          ?? 0,
+      hp:            snapIsCharSkill ? (snap.hp  ?? '') : (snap.hp  ?? 0),
+      shd:           snapIsCharSkill ? (snap.shd ?? '') : (snap.shd ?? 0),
       energy:        snap.energy       ?? 0,
       creatorCredit: snap.creatorCredit || 'iridesuwa',
       gameName:      snap.gameName     || 'Null Corps',
