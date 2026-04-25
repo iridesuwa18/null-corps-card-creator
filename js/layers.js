@@ -1045,8 +1045,10 @@
     const target = el.querySelector('.confined-inner') || el;
 
     // Char. Skill mode: HP (14) shifts left 120px, SHD (15) shifts right 120px,
-    // both center-aligned. Restore defaults when switching away.
+    // both center-aligned. Also use a smaller font size in char-skill mode.
+    // Restore defaults when switching away.
     if (def.id === 14 || def.id === 15) {
+      const ptToPx = 3;
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
           ? (def.x - 120)   // HP: move left 120px
@@ -1054,9 +1056,12 @@
         el.style.left = shiftX + 'px';
         el.style.transform = 'translateX(-50%)';
         el.style.textAlign = 'center';
+        // Smaller font size for char-skill mode; text stays centred at same anchor
+        el.style.fontSize = (def.size * ptToPx * 0.7) + 'px';
       } else {
-        // Restore original position and alignment
+        // Restore original position, alignment, and font size
         el.style.left = def.x + 'px';
+        el.style.fontSize = (def.size * ptToPx) + 'px';
         if (def.align === 'right') {
           el.style.transform = 'translateX(-100%)';
           el.style.textAlign = 'right';
