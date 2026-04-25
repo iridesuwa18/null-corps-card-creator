@@ -1050,15 +1050,15 @@
     if (def.id === 14 || def.id === 15) {
       const ptToPx = 3;
       const fullSize  = def.size * ptToPx;   // 42pt × 3 = 126px
-      const smallSize = fullSize * 0.5;      // 63px in char-skill mode
+      const smallSize = fullSize * 0.7;      // 63px in char-skill mode
       // The HP/SHD panel inner height (in card px). The original text y is at
       // the top of the panel; full-size text fills it. At smaller size we need
       // to shift down so the text is vertically centred in the same panel area.
       const PANEL_H = fullSize * 1.25;       // approximates inner panel height
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
-          ? (def.x - 140)   // HP: move left 140px
-          : (def.x + 140);  // SHD: move right 140px
+          ? (def.x - 150)   // HP: move left 140px
+          : (def.x + 150);  // SHD: move right 140px
         // Centre smaller text vertically within the panel
         const vertOffset = (PANEL_H - smallSize) / 2;
         el.style.left      = shiftX + 'px';
