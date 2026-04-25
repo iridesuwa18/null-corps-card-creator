@@ -1057,8 +1057,8 @@
       const PANEL_H = fullSize * 1.25;       // approximates inner panel height
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
-          ? (def.x - 150)   // HP: move left 140px
-          : (def.x + 150);  // SHD: move right 140px
+          ? (def.x - 155)   // HP: move left 140px
+          : (def.x + 160);  // SHD: move right 140px
         // Centre smaller text vertically within the panel
         const vertOffset = (PANEL_H - smallSize) / 2;
         el.style.left      = shiftX + 'px';
