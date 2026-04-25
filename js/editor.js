@@ -171,6 +171,7 @@
    */
   function getTextState() {
     const s = window.NullCorps.state;
+    const isCharSkill = s.cardMode === 'char-skill';
     return {
       cardName:      s.cardName      || '',
       cardTitle:     s.cardTitle     || '',
@@ -180,8 +181,8 @@
       cardEffect:    s.cardEffect    || '',
       atk:           s.atk           ?? 0,
       def:           s.def           ?? 0,
-      hp:            s.hp            ?? 0,
-      shd:           s.shd           ?? 0,
+      hp:            isCharSkill ? (s.hp  ?? '') : (s.hp  ?? 0),
+      shd:           isCharSkill ? (s.shd ?? '') : (s.shd ?? 0),
       energy:        s.energy        ?? 0,
       creatorCredit: s.creatorCredit || 'iridesuwa',
       gameName:      s.gameName      || 'Null Corps',
@@ -198,10 +199,14 @@
   function applyTextState(snap) {
     if (!snap) return;
     const s = window.NullCorps.state;
-    const numberKeys = ['atk', 'def', 'hp', 'shd', 'energy'];
+    const alwaysNumberKeys = ['atk', 'def', 'energy'];
+    // hp and shd are text in char-skill mode (Exchange Skill 1 / 2)
+    const isCharSkill = s.cardMode === 'char-skill';
 
     for (const key of Object.keys(snap)) {
-      if (numberKeys.includes(key)) {
+      if (alwaysNumberKeys.includes(key)) {
+        s[key] = Number(snap[key]) || 0;
+      } else if ((key === 'hp' || key === 'shd') && !isCharSkill) {
         s[key] = Number(snap[key]) || 0;
       } else {
         s[key] = snap[key] ?? '';
