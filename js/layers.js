@@ -1054,7 +1054,7 @@
       // The HP/SHD panel inner height (in card px). The original text y is at
       // the top of the panel; full-size text fills it. At smaller size we need
       // to shift down so the text is vertically centred in the same panel area.
-      const PANEL_H = fullSize * 1.0;       // approximates inner panel height
+      const PANEL_H = fullSize * 1.25;       // approximates inner panel height
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
           ? (def.x - 155)   // HP: move left 160px
