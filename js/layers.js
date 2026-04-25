@@ -1045,25 +1045,27 @@
     const target = el.querySelector('.confined-inner') || el;
 
     // Char. Skill mode: HP (14) shifts left 120px, SHD (15) shifts right 120px,
-    // both center-aligned. Also use a smaller font size in char-skill mode.
-    // Vertical position is compensated so the text stays centred in the panel
-    // despite the smaller font height. Restore all defaults when switching away.
+    // both center-aligned. Also shrinks font and vertically centres the smaller
+    // text within the HP/SHD panel. Restore all defaults when switching away.
     if (def.id === 14 || def.id === 15) {
       const ptToPx = 3;
-      const fullSize  = def.size * ptToPx;           // e.g. 42pt x 3 = 126px
-      const smallSize = fullSize * 0.5;              // 50% size in char-skill mode
+      const fullSize  = def.size * ptToPx;   // 42pt × 3 = 126px
+      const smallSize = fullSize * 0.5;      // 63px in char-skill mode
+      // The HP/SHD panel inner height (in card px). The original text y is at
+      // the top of the panel; full-size text fills it. At smaller size we need
+      // to shift down so the text is vertically centred in the same panel area.
+      const PANEL_H = fullSize * 1.25;       // approximates inner panel height
       if (mode === 'char-skill') {
         const shiftX = def.id === 14
-          ? (def.x - 135)   // HP: move left 135px
-          : (def.x + 135);  // SHD: move right 135px
-        // Offset top downward by half the size difference so text stays
-        // vertically centred at the same visual midpoint as the full-size text.
-        const vertOffset = (fullSize - smallSize) / 2;
+          ? (def.x - 140)   // HP: move left 140px
+          : (def.x + 140);  // SHD: move right 140px
+        // Centre smaller text vertically within the panel
+        const vertOffset = (PANEL_H - smallSize) / 2;
         el.style.left      = shiftX + 'px';
         el.style.top       = (def.y + vertOffset) + 'px';
+        el.style.fontSize  = smallSize + 'px';
         el.style.transform = 'translateX(-50%)';
         el.style.textAlign = 'center';
-        el.style.fontSize  = smallSize + 'px';
       } else {
         // Restore original position, alignment, and font size
         el.style.left     = def.x + 'px';
