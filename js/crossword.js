@@ -51,7 +51,7 @@
   /* Letter colours */
   const LETTER_COLOR    = '#ffffff';
   const LETTER_OUTLINE  = '#000000';
-  const LETTER_OUTLINE_W = 4;
+  const LETTER_OUTLINE_W = 8;
 
   const DEFAULT_TILE = 'assets/default_tile.png';
 
