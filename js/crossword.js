@@ -94,6 +94,11 @@
   // This is serialised as a Set of pair indices in state.
   let _pairBreaks = new Set();     // Set<number> — indices of broken pairs
 
+  // _separatedPairLinks[i] = true means pair (word i, word i+1) should be
+  // rendered joined (crossword-linked) even when Separate Words mode is on.
+  // Only respected in _separated mode; ignored otherwise.
+  let _separatedPairLinks = new Set(); // Set<number>
+
   /* ══════════════════════════════════════════════════════════════
      PARSER
   ══════════════════════════════════════════════════════════════ */
@@ -292,17 +297,22 @@
         return;
       }
 
-      // Check per-pair break — if the pair (wi-1, wi) is force-broken, skip merge
+      // Check per-pair break — if the pair (wi-1, wi) is force-broken, skip merge.
+      // In separated mode, only attempt merge if this pair is explicitly linked.
       const prevPlacedIdx = placed.length - 1;
       const pairBroken = _pairBreaks.has(wi - 1);
+      const pairLinkedInSepMode = _separated && _separatedPairLinks.has(wi - 1);
 
       let bestAnchor = null, bestMerge = null;
-      if (!pairBroken) {
+      // Attempt merge when: not force-broken AND (joined mode OR explicitly linked in sep mode)
+      if (!pairBroken && (!_separated || pairLinkedInSepMode)) {
         const prevWord = placed[prevPlacedIdx];
         if (prevWord && !prevWord.separated) {
           const anchorUsed = usedAnchorPositions.get(prevPlacedIdx) || new Set();
-          // For new word, track positions used so far (none yet for this word)
-          const newUsed = new Set();
+          // For new word, seed used positions with any letters already committed
+          // on this word (from earlier in its placement). For first placement this
+          // is empty, but when the same word later becomes an anchor we pre-seed.
+          const newUsed = usedAnchorPositions.get(placed.length) || new Set();
           const m = _findMerge(prevWord.letters, letters, anchorUsed, newUsed);
           if (m) { bestAnchor = prevWord; bestMerge = m; }
         }
@@ -356,7 +366,13 @@
       }
 
       placed.push({ raw: wordStr, letters, dir: baseDir, gridX: gx, gridY: gy, separated: false });
-      usedAnchorPositions.set(placed.length - 1, new Set());
+      // Pre-seed the new word's future anchor-used set with the merge index
+      // it just consumed.  When this word becomes the anchor for the next word,
+      // that letter position is already marked so a different letter gets chosen
+      // (fixes the Cake×4 / identical-word chain bug).
+      const newWordAnchorUsed = new Set();
+      newWordAnchorUsed.add(myMergeIdx);
+      usedAnchorPositions.set(placed.length - 1, newWordAnchorUsed);
     });
 
     return placed;
@@ -493,9 +509,27 @@
 
   /* ── Separated rendering ── */
   function _renderSeparated(container) {
-    _words.forEach((word, idx) => {
-      _buildGroup(container, [word], idx, true);
-    });
+    // Build clusters: consecutive words linked via _separatedPairLinks are
+    // rendered as one group (crossword-joined); others get their own group.
+    const clusters = [];
+    let current = [_words[0]];
+    for (let i = 1; i < _words.length; i++) {
+      if (_separatedPairLinks.has(i - 1) && !_words[i].separated) {
+        // This pair is explicitly linked — keep in same cluster
+        current.push(_words[i]);
+      } else {
+        clusters.push(current);
+        current = [_words[i]];
+      }
+    }
+    if (current.length) clusters.push(current);
+
+    let bbIdx = 0;
+    for (const cluster of clusters) {
+      // noMerge=false for linked clusters (show gold merge tiles), true for solo words
+      _buildGroup(container, cluster, bbIdx, cluster.length === 1);
+      bbIdx++;
+    }
   }
 
   /* ── Build one DOM group ── */
@@ -1112,12 +1146,69 @@
           container.appendChild(breakRow);
         }
       }
+
+      /* ── Per-pair link toggle — only in separated mode, between words ── */
+      if (_separated && wi < rawWords.length - 1) {
+        const pairIdx = wi;
+        const isLinked = _separatedPairLinks.has(pairIdx);
+
+        const linkRow = document.createElement('div');
+        linkRow.style.cssText = [
+          'display: flex', 'align-items: center', 'gap: 6px',
+          'margin: 3px 0 6px 0',
+        ].join(';');
+
+        const lineL = document.createElement('div');
+        lineL.style.cssText = [
+          'flex: 1', 'height: 1px',
+          `background: ${isLinked ? 'var(--c-accent, #c8ff00)' : 'var(--c-border, #2a2a2f)'}`,
+          'opacity: 0.5',
+        ].join(';');
+
+        const linkBtn = document.createElement('button');
+        linkBtn.type = 'button';
+        linkBtn.textContent = isLinked ? '⊠ linked' : '⊞ link';
+        linkBtn.title = isLinked
+          ? `Unlink — Word ${wi + 1} and Word ${wi + 2} will be separate`
+          : `Link — Word ${wi + 1} and Word ${wi + 2} will crossword-join`;
+        linkBtn.style.cssText = [
+          'padding: 2px 9px', 'font-size: 9px',
+          "font-family: var(--font-mono, 'Courier New', monospace)",
+          'border-radius: 3px', 'cursor: pointer', 'white-space: nowrap',
+          'letter-spacing: 0.04em', 'font-weight: 600',
+          isLinked
+            ? 'background: var(--c-accent-dim, rgba(200,255,0,0.12)); color: var(--c-accent, #c8ff00); border: 1px solid var(--c-accent, #c8ff00);'
+            : 'background: var(--c-surface-2, #1e1e2e); color: var(--c-text-hint, #5f5f80); border: 1px dashed var(--c-border, #2a2a2f);',
+        ].join(';');
+        linkBtn.addEventListener('click', () => {
+          if (_separatedPairLinks.has(pairIdx)) {
+            _separatedPairLinks.delete(pairIdx);
+          } else {
+            _separatedPairLinks.add(pairIdx);
+          }
+          _persistSeparatedLinks();
+          build();
+        });
+
+        const lineR = document.createElement('div');
+        lineR.style.cssText = lineL.style.cssText;
+
+        linkRow.appendChild(lineL);
+        linkRow.appendChild(linkBtn);
+        linkRow.appendChild(lineR);
+        container.appendChild(linkRow);
+      }
     });
   }
 
   /** Persist _pairBreaks to NullCorps.state as a plain array */
   function _persistBreaks() {
     window.NullCorps.state.crosswordPairBreaks = Array.from(_pairBreaks);
+  }
+
+  /** Persist _separatedPairLinks to NullCorps.state */
+  function _persistSeparatedLinks() {
+    window.NullCorps.state.crosswordSeparatedPairLinks = Array.from(_separatedPairLinks);
   }
 
   function _rebuildUI(rawWords) {
@@ -1165,6 +1256,7 @@
       locked:           _locked,
       crosswordVisible: _crosswordVisible,
       pairBreaks:       Array.from(_pairBreaks),
+      separatedPairLinks: Array.from(_separatedPairLinks),
     };
   }
 
@@ -1178,6 +1270,9 @@
     if (snap.crosswordVisible  !== undefined) _crosswordVisible = snap.crosswordVisible;
     if (Array.isArray(snap.pairBreaks)) {
       _pairBreaks = new Set(snap.pairBreaks);
+    }
+    if (Array.isArray(snap.separatedPairLinks)) {
+      _separatedPairLinks = new Set(snap.separatedPairLinks);
     }
     if (snap.bbStates && Array.isArray(snap.bbStates)) {
       _bbStates = snap.bbStates.map(b => ({ ...b }));
@@ -1215,6 +1310,9 @@
     }
     if (Array.isArray(window.NullCorps.state.crosswordPairBreaks)) {
       _pairBreaks = new Set(window.NullCorps.state.crosswordPairBreaks);
+    }
+    if (Array.isArray(window.NullCorps.state.crosswordSeparatedPairLinks)) {
+      _separatedPairLinks = new Set(window.NullCorps.state.crosswordSeparatedPairLinks);
     }
 
     const tileInput = document.getElementById('tile-image-url');
