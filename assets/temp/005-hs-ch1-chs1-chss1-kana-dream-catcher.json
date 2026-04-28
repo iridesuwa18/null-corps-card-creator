@@ -1,0 +1,67 @@
+{
+  "presetName": "005-HS-CH1-CHS1-CHSS1 Kana Dream Catcher",
+  "territory": "Vacuorus",
+  "cardMode": "char-skill",
+  "eventSubtype": "",
+  "cardName": "<D>re[a]m C[a]tc<h>er",
+  "cardTitle": "KANA KIYOMI",
+  "cardType": "CHAR. SUBSKILL",
+  "era": "0 ME",
+  "uniqueNumber": "005-HS-CH1-CHS1-CHSS1",
+  "atk": 100,
+  "def": 100,
+  "hp": "Portal >",
+  "shd": "< Dream",
+  "energy": 2,
+  "cardEffect": "[Pair:] Heal 10 HP to an [Ally or Kana] for every [Dreamscape] card in your hand.\n[Triple/Multi:] Heal for 20 HP instead.",
+  "creatorCredit": "iridesuwa",
+  "gameName": "Null Corps",
+  "tileImageUrl": "",
+  "crossword": {
+    "x": 595.9538762699002,
+    "y": 1432.4443260979745,
+    "scale": 0.9799999999999969,
+    "angle": 0,
+    "bbStates": [
+      {
+        "x": 595.9538762699002,
+        "y": 1432.4443260979745,
+        "scale": 0.9799999999999969,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 700,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1000,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1300,
+        "scale": 1,
+        "angle": 0
+      }
+    ],
+    "separated": false,
+    "flipFirst": true,
+    "fixedOrientation": false,
+    "wordOrientations": [],
+    "locked": true,
+    "crosswordVisible": true
+  },
+  "layerVisibility": {
+    "1": true,
+    "9": false,
+    "12": false,
+    "13": false,
+    "14": true,
+    "15": true,
+    "35": true
+  }
+}

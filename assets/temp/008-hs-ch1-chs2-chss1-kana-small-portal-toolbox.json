@@ -1,0 +1,75 @@
+{
+  "presetName": "008-HS-CH1-CHS2-CHSS1 Kana Small Portal: Toolbox",
+  "territory": "Vacuorus",
+  "cardMode": "char-skill",
+  "eventSubtype": "",
+  "cardName": "Smal[l] Porta[l]: Toolb<o>x",
+  "cardTitle": "KANA KIYOMI",
+  "cardType": "CHAR. SUBSKILL",
+  "era": "0 ME",
+  "uniqueNumber": "008-HS-CH1-CHS2-CHSS1",
+  "atk": 100,
+  "def": 100,
+  "hp": "Portal >",
+  "shd": "< Dream",
+  "energy": 1,
+  "cardEffect": "[Pair:] Draw a random [1-cost] card from your deck to your hand.\n[Triple/Multi:] Pick instead of Draw.",
+  "creatorCredit": "iridesuwa",
+  "gameName": "Null Corps",
+  "tileImageUrl": "",
+  "crossword": {
+    "x": 882.7275692426743,
+    "y": 778.31725298936,
+    "scale": 0.8609999999999968,
+    "angle": 0,
+    "bbStates": [
+      {
+        "x": 882.7275692426743,
+        "y": 778.31725298936,
+        "scale": 0.8609999999999968,
+        "angle": 0
+      },
+      {
+        "x": 577.0907921821555,
+        "y": 1913.7443114544053,
+        "scale": 0.8519999999999999,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1000,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1300,
+        "scale": 1,
+        "angle": 0
+      }
+    ],
+    "separated": true,
+    "flipFirst": true,
+    "fixedOrientation": true,
+    "wordOrientations": [
+      "h",
+      "v",
+      "h"
+    ],
+    "locked": false,
+    "crosswordVisible": true,
+    "pairBreaks": [],
+    "separatedPairLinks": [
+      0
+    ]
+  },
+  "layerVisibility": {
+    "1": true,
+    "9": false,
+    "12": false,
+    "13": false,
+    "14": true,
+    "15": true,
+    "35": true
+  }
+}

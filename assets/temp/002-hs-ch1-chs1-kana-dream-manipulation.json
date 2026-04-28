@@ -1,0 +1,67 @@
+{
+  "presetName": "002-HS-CH1-CHS1 Kana Dream Manipulation",
+  "territory": "Vacuorus",
+  "cardMode": "char-skill",
+  "eventSubtype": "",
+  "cardName": "<D>rea[m] [M]anipulati<o>n",
+  "cardTitle": "KANA KIYOMI",
+  "cardType": "CHAR. SKILL",
+  "era": "0 ME",
+  "uniqueNumber": "002-HS-CH1-CHS1",
+  "atk": 100,
+  "def": 100,
+  "hp": "Portal >",
+  "shd": "< Dream",
+  "energy": 1,
+  "cardEffect": "Pick 1 out of 3 random [Dreamscape] cards to add to your hand.",
+  "creatorCredit": "iridesuwa",
+  "gameName": "Null Corps",
+  "tileImageUrl": "",
+  "crossword": {
+    "x": 175.8406460585007,
+    "y": 1490.1155598139321,
+    "scale": 0.8029999999999947,
+    "angle": 0,
+    "bbStates": [
+      {
+        "x": 175.8406460585007,
+        "y": 1490.1155598139321,
+        "scale": 0.8029999999999947,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 700,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1000,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1300,
+        "scale": 1,
+        "angle": 0
+      }
+    ],
+    "separated": false,
+    "flipFirst": true,
+    "fixedOrientation": false,
+    "wordOrientations": [],
+    "locked": true,
+    "crosswordVisible": true
+  },
+  "layerVisibility": {
+    "1": true,
+    "9": false,
+    "12": false,
+    "13": false,
+    "14": true,
+    "15": true,
+    "35": true
+  }
+}

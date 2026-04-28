@@ -1,0 +1,67 @@
+{
+  "presetName": "003-HS-CH1-CHS2 Kana Portal Summon",
+  "territory": "Vacuorus",
+  "cardMode": "char-skill",
+  "eventSubtype": "",
+  "cardName": "<P>[o]rtal Summ[o]<n>",
+  "cardTitle": "KANA KIYOMI",
+  "cardType": "CHAR. SKILL",
+  "era": "0 ME",
+  "uniqueNumber": "003-HS-CH1-CHS2",
+  "atk": 100,
+  "def": 100,
+  "hp": "Portal >",
+  "shd": "< Dream",
+  "energy": 1,
+  "cardEffect": "[Pair:] Draw 1 random [Portal Sub-Skill] in your deck to your hand.\n[Triple/Multi:] Draw 2 random [Portal Sub-Skills] in your deck to your hand. -1 more [Energy].",
+  "creatorCredit": "iridesuwa",
+  "gameName": "Null Corps",
+  "tileImageUrl": "",
+  "crossword": {
+    "x": 635.5068289071842,
+    "y": 1180.087703008944,
+    "scale": 1.0409999999999966,
+    "angle": 0,
+    "bbStates": [
+      {
+        "x": 635.5068289071842,
+        "y": 1180.087703008944,
+        "scale": 1.0409999999999966,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 700,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1000,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1300,
+        "scale": 1,
+        "angle": 0
+      }
+    ],
+    "separated": false,
+    "flipFirst": false,
+    "fixedOrientation": false,
+    "wordOrientations": [],
+    "locked": true,
+    "crosswordVisible": true
+  },
+  "layerVisibility": {
+    "1": true,
+    "9": false,
+    "12": false,
+    "13": false,
+    "14": true,
+    "15": true,
+    "35": true
+  }
+}

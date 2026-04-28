@@ -1,0 +1,59 @@
+{
+  "presetName": "001-HS-CH1 Kana Kiyomi Character Card",
+  "territory": "Vacuorus",
+  "cardMode": "territory",
+  "eventSubtype": "",
+  "cardName": "[K]an<a> [K]iyo<m>i",
+  "cardTitle": "ZONE ARCHON",
+  "cardType": "CHARACTER",
+  "era": "0 ME",
+  "uniqueNumber": "001-HS-CH1",
+  "atk": 100,
+  "def": 100,
+  "hp": 800,
+  "shd": 500,
+  "energy": 1,
+  "cardEffect": "[Dream Trap:] Kana cannot move on to [Second Chance]. \n[MC Passive:] At the start of every turn, create a random [Dreamscape] card in your hand.",
+  "creatorCredit": "iridesuwa",
+  "gameName": "Null Corps",
+  "tileImageUrl": "",
+  "crossword": {
+    "x": 503.2910080687176,
+    "y": 777.7642344766393,
+    "scale": 1.1009999999999938,
+    "angle": 0,
+    "bbStates": [
+      {
+        "x": 503.2910080687176,
+        "y": 777.7642344766393,
+        "scale": 1.1009999999999938,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 700,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1000,
+        "scale": 1,
+        "angle": 0
+      },
+      {
+        "x": 500,
+        "y": 1300,
+        "scale": 1,
+        "angle": 0
+      }
+    ],
+    "separated": false,
+    "flipFirst": false,
+    "fixedOrientation": false,
+    "wordOrientations": [],
+    "locked": true,
+    "crosswordVisible": true
+  },
+  "layerVisibility": {}
+}
