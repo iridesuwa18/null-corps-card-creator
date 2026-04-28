@@ -199,11 +199,15 @@
       }
 
       // Find best anchor word + merge indices
+      // Chain rule: only try to merge with the immediately preceding word (wi-1).
+      // This ensures words link as a chain (1↔2, 2↔3, 3↔4 …) rather than
+      // accidentally merging a later word with an earlier one that happens to
+      // share a letter.
       let bestAnchor = null, bestMerge = null;
-      for (const pw of placed) {
-        if (pw.separated) continue;
-        const m = _findMerge(pw.letters, letters);
-        if (m) { bestAnchor = pw; bestMerge = m; break; }
+      const prevWord = placed[placed.length - 1];
+      if (prevWord && !prevWord.separated) {
+        const m = _findMerge(prevWord.letters, letters);
+        if (m) { bestAnchor = prevWord; bestMerge = m; }
       }
 
       // If no shared letter, mark as auto-separated
