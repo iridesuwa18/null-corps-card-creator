@@ -2094,6 +2094,45 @@
       })
     )
     .then((canvas) => {
+      // ── Apply card_mask.png as an alpha mask ──────────────────────────
+      // Load the mask image (same dimensions as the card: CARD_W × CARD_H).
+      // Uses Canvas 2D "destination-in" compositing: wherever the mask is
+      // transparent, the card becomes transparent too — giving the card its
+      // shaped outline in the exported PNG.
+      return new Promise((resolve, reject) => {
+        const maskImg = new Image();
+        maskImg.crossOrigin = 'anonymous';
+        maskImg.onload = () => {
+          // Create an offscreen canvas at native card size
+          const masked = document.createElement('canvas');
+          masked.width  = CARD_W;
+          masked.height = CARD_H;
+          const ctx = masked.getContext('2d');
+
+          // 1. Draw the rendered card
+          ctx.drawImage(canvas, 0, 0);
+
+          // 2. "destination-in" keeps existing pixels only where the NEW
+          //    drawing (the mask) is opaque. Transparent mask pixels erase
+          //    the card pixels beneath them.
+          ctx.globalCompositeOperation = 'destination-in';
+          ctx.drawImage(maskImg, 0, 0, CARD_W, CARD_H);
+
+          // Reset composite mode (good practice)
+          ctx.globalCompositeOperation = 'source-over';
+
+          resolve(masked);
+        };
+        maskImg.onerror = () => {
+          // If the mask fails to load (e.g. not yet added to assets/),
+          // fall back gracefully to the unmasked canvas.
+          console.warn('[layers.js] card_mask.png not found — exporting without mask.');
+          resolve(canvas);
+        };
+        maskImg.src = GITHUB_ASSETS_BASE + 'card_mask.png';
+      });
+    })
+    .then((canvas) => {
       // ── Trigger PNG download ──────────────────────────────────────────
       const a  = document.createElement('a');
       a.href     = canvas.toDataURL('image/png');
