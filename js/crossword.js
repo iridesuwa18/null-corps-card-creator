@@ -381,66 +381,6 @@
   return placed;
 }
 
-      // If no shared letter or force-broken, mark as auto-separated
-      if (!bestAnchor) {
-        placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: true });
-        usedAnchorPositions.set(placed.length - 1, new Set());
-        return;
-      }
-
-      // Mark merge letters on both words
-      const anchorPlacedIdx = prevPlacedIdx;
-      const anchorMergeIdx  = bestMerge.myIdx;
-      const myMergeIdx      = bestMerge.theirIdx;
-
-      if (bestAnchor.letters[anchorMergeIdx].type === 'normal') {
-        bestAnchor.letters[anchorMergeIdx] = { ...bestAnchor.letters[anchorMergeIdx], type: 'merge' };
-      }
-      if (letters[myMergeIdx].type === 'normal') {
-        letters[myMergeIdx] = { ...letters[myMergeIdx], type: 'merge' };
-      }
-
-      // Record this anchor position as used on the anchor word
-      if (!usedAnchorPositions.has(anchorPlacedIdx)) {
-        usedAnchorPositions.set(anchorPlacedIdx, new Set());
-      }
-      usedAnchorPositions.get(anchorPlacedIdx).add(anchorMergeIdx);
-
-      // Position new word so merge tiles overlap
-      let gx, gy;
-      if (baseDir === 'h') {
-        const anchorCol = bestAnchor.dir === 'h'
-          ? bestAnchor.gridX + anchorMergeIdx
-          : bestAnchor.gridX;
-        const anchorRow = bestAnchor.dir === 'v'
-          ? bestAnchor.gridY + anchorMergeIdx
-          : bestAnchor.gridY;
-        gx = anchorCol - myMergeIdx;
-        gy = anchorRow;
-      } else {
-        const anchorCol = bestAnchor.dir === 'h'
-          ? bestAnchor.gridX + anchorMergeIdx
-          : bestAnchor.gridX;
-        const anchorRow = bestAnchor.dir === 'v'
-          ? bestAnchor.gridY + anchorMergeIdx
-          : bestAnchor.gridY;
-        gx = anchorCol;
-        gy = anchorRow - myMergeIdx;
-      }
-
-      placed.push({ raw: wordStr, letters, dir: baseDir, gridX: gx, gridY: gy, separated: false });
-      // Pre-seed the new word's future anchor-used set with the merge index
-      // it just consumed.  When this word becomes the anchor for the next word,
-      // that letter position is already marked so a different letter gets chosen
-      // (fixes the Cake×4 / identical-word chain bug).
-      const newWordAnchorUsed = new Set();
-      newWordAnchorUsed.add(myMergeIdx);
-      usedAnchorPositions.set(placed.length - 1, newWordAnchorUsed);
-    });
-
-    return placed;
-  }
-
   /* ══════════════════════════════════════════════════════════════
      TILE FACTORY
   ══════════════════════════════════════════════════════════════ */
