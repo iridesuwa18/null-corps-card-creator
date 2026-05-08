@@ -307,7 +307,7 @@
       // Attempt merge when: not force-broken AND (joined mode OR explicitly linked in sep mode)
       if (!pairBroken && (!_separated || pairLinkedInSepMode)) {
         const prevWord = placed[prevPlacedIdx];
-        if (prevWord && !prevWord.separated) {
+        if (prevWord) {
           const anchorUsed = usedAnchorPositions.get(prevPlacedIdx) || new Set();
           // For new word, seed used positions with any letters already committed
           // on this word (from earlier in its placement). For first placement this
