@@ -314,7 +314,13 @@
           // is empty, but when the same word later becomes an anchor we pre-seed.
           const newUsed = usedAnchorPositions.get(placed.length) || new Set();
           const m = _findMerge(prevWord.letters, letters, anchorUsed, newUsed);
-          if (m) { bestAnchor = prevWord; bestMerge = m; }
+          if (m) {
+           bestAnchor = prevWord;
+           bestMerge = m;
+           // If the anchor was auto-separated (couldn't chain with ITS predecessor),
+           // it can still be a valid anchor — mark it as joined now.
+           if (bestAnchor.separated) bestAnchor.separated = false;
+         }
         }
       }
 
