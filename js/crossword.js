@@ -366,13 +366,12 @@
       }
 
       placed.push({ raw: wordStr, letters, dir: baseDir, gridX: gx, gridY: gy, separated: false });
-      // Pre-seed the new word's future anchor-used set with the merge index
-      // it just consumed.  When this word becomes the anchor for the next word,
-      // that letter position is already marked so a different letter gets chosen
-      // (fixes the Cake×4 / identical-word chain bug).
-      const newWordAnchorUsed = new Set();
-      newWordAnchorUsed.add(myMergeIdx);
-      usedAnchorPositions.set(placed.length - 1, newWordAnchorUsed);
+      // Do NOT pre-seed myMergeIdx into the new word's own anchor-used set.
+      // The anchor-side tracking (line 344) already prevents the Cake×4 re-use bug
+      // by marking the consumed position on the *anchor* word.  Pre-seeding here
+      // was incorrectly blocking a later word from crossing this word at the same
+      // tile (e.g. Lab[a] being blocked for Vacuorus after Themes already used it).
+      usedAnchorPositions.set(placed.length - 1, new Set());
     });
 
     return placed;
