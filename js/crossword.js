@@ -268,118 +268,121 @@
   ══════════════════════════════════════════════════════════════ */
 
   function _layoutWords(rawWords) {
-  if (!rawWords.length) return [];
-  const placed = [];
-  const usedAnchorPositions = new Map();
+    if (!rawWords.length) return [];
+    const placed = [];
 
-  rawWords.forEach((wordStr, wi) => {
-    const letters = _parseWord(wordStr);
+    // Track used merge anchor positions per placed-word index
+    // key = index in placed[], value = Set of letter indices used as anchors
+    const usedAnchorPositions = new Map();
 
-    let baseDir;
-    if (_fixedOrientation && _separated) {
-      if (_wordOrientations[wi] === undefined) {
-        _wordOrientations[wi] = (wi % 2 === 0) ? 'h' : 'v';
+    rawWords.forEach((wordStr, wi) => {
+      const letters = _parseWord(wordStr);
+
+      // Direction
+      let baseDir;
+      if (_fixedOrientation && _separated) {
+        if (_wordOrientations[wi] === undefined) {
+          _wordOrientations[wi] = (wi % 2 === 0) ? 'h' : 'v';
+        }
+        baseDir = _wordOrientations[wi];
+      } else if (_flipFirst) {
+        baseDir = (wi % 2 === 0) ? 'v' : 'h';
+      } else {
+        baseDir = (wi % 2 === 0) ? 'h' : 'v';
       }
-      baseDir = _wordOrientations[wi];
-    } else if (_flipFirst) {
-      baseDir = (wi % 2 === 0) ? 'v' : 'h';
-    } else {
-      baseDir = (wi % 2 === 0) ? 'h' : 'v';
-    }
 
-    if (wi === 0) {
-      placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: false });
-      usedAnchorPositions.set(0, new Set());
-      return;
-    }
+      if (wi === 0) {
+        placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: false });
+        usedAnchorPositions.set(0, new Set());
+        return;
+      }
 
-    // In separated mode, only attempt merge if this pair is explicitly linked.
-    const pairLinkedInSepMode = _separated && _separatedPairLinks.has(wi - 1);
-    if (_separated && !pairLinkedInSepMode) {
-      placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: true });
-      usedAnchorPositions.set(placed.length - 1, new Set());
-      return;
-    }
+      // Check per-pair break — if the pair (wi-1, wi) is force-broken, skip merge.
+      // In separated mode, only attempt merge if this pair is explicitly linked.
+      const prevPlacedIdx = placed.length - 1;
+      const pairBroken = _pairBreaks.has(wi - 1);
+      const pairLinkedInSepMode = _separated && _separatedPairLinks.has(wi - 1);
 
-    // Walk backwards through placed words to find the nearest linkable anchor.
-    // Skip pairs that are force-broken. Stop as soon as we find a merge.
-    let bestAnchor = null, bestMerge = null, bestAnchorPlacedIdx = -1;
+      let bestAnchor = null, bestMerge = null;
+      // Attempt merge when: not force-broken AND (joined mode OR explicitly linked in sep mode)
+      if (!pairBroken && (!_separated || pairLinkedInSepMode)) {
+        const prevWord = placed[prevPlacedIdx];
+        if (prevWord) {
+          const anchorUsed = usedAnchorPositions.get(prevPlacedIdx) || new Set();
+          // For new word, seed used positions with any letters already committed
+          // on this word (from earlier in its placement). For first placement this
+          // is empty, but when the same word later becomes an anchor we pre-seed.
+          const newUsed = usedAnchorPositions.get(placed.length) || new Set();
+          const m = _findMerge(prevWord.letters, letters, anchorUsed, newUsed);
+          if (m) {
+           bestAnchor = prevWord;
+           bestMerge = m;
+           // If the anchor was auto-separated (couldn't chain with ITS predecessor),
+           // it can still be a valid anchor — mark it as joined now.
+           if (bestAnchor.separated) bestAnchor.separated = false;
+         }
+        }
+      }
 
-    for (let pi = placed.length - 1; pi >= 0; pi--) {
-  if (_pairBreaks.has(pi)) break;
+      // If no shared letter or force-broken, mark as auto-separated
+      if (!bestAnchor) {
+        placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: true });
+        usedAnchorPositions.set(placed.length - 1, new Set());
+        return;
+      }
 
-  const candidate = placed[pi];
-  const anchorUsed = usedAnchorPositions.get(pi) || new Set();
-  const newUsed = usedAnchorPositions.get(placed.length) || new Set();
-  const m = _findMerge(candidate.letters, letters, anchorUsed, newUsed);
-  if (m) {
-    bestAnchor = candidate;
-    bestMerge = m;
-    bestAnchorPlacedIdx = pi;
-    break;
+      // Mark merge letters on both words
+      const anchorPlacedIdx = prevPlacedIdx;
+      const anchorMergeIdx  = bestMerge.myIdx;
+      const myMergeIdx      = bestMerge.theirIdx;
+
+      if (bestAnchor.letters[anchorMergeIdx].type === 'normal') {
+        bestAnchor.letters[anchorMergeIdx] = { ...bestAnchor.letters[anchorMergeIdx], type: 'merge' };
+      }
+      if (letters[myMergeIdx].type === 'normal') {
+        letters[myMergeIdx] = { ...letters[myMergeIdx], type: 'merge' };
+      }
+
+      // Record this anchor position as used on the anchor word
+      if (!usedAnchorPositions.has(anchorPlacedIdx)) {
+        usedAnchorPositions.set(anchorPlacedIdx, new Set());
+      }
+      usedAnchorPositions.get(anchorPlacedIdx).add(anchorMergeIdx);
+
+      // Position new word so merge tiles overlap
+      let gx, gy;
+      if (baseDir === 'h') {
+        const anchorCol = bestAnchor.dir === 'h'
+          ? bestAnchor.gridX + anchorMergeIdx
+          : bestAnchor.gridX;
+        const anchorRow = bestAnchor.dir === 'v'
+          ? bestAnchor.gridY + anchorMergeIdx
+          : bestAnchor.gridY;
+        gx = anchorCol - myMergeIdx;
+        gy = anchorRow;
+      } else {
+        const anchorCol = bestAnchor.dir === 'h'
+          ? bestAnchor.gridX + anchorMergeIdx
+          : bestAnchor.gridX;
+        const anchorRow = bestAnchor.dir === 'v'
+          ? bestAnchor.gridY + anchorMergeIdx
+          : bestAnchor.gridY;
+        gx = anchorCol;
+        gy = anchorRow - myMergeIdx;
+      }
+
+      placed.push({ raw: wordStr, letters, dir: baseDir, gridX: gx, gridY: gy, separated: false });
+      // Pre-seed the new word's future anchor-used set with the merge index
+      // it just consumed.  When this word becomes the anchor for the next word,
+      // that letter position is already marked so a different letter gets chosen
+      // (fixes the Cake×4 / identical-word chain bug).
+      const newWordAnchorUsed = new Set();
+      newWordAnchorUsed.add(myMergeIdx);
+      usedAnchorPositions.set(placed.length - 1, newWordAnchorUsed);
+    });
+
+    return placed;
   }
-
-  // Only look further back if the immediate predecessor is completely exhausted.
-  // Prevents jumping over a word and causing overlaps.
-  if (pi === placed.length - 1) {
-    const allUsed = anchorUsed.size >= candidate.letters.filter(l => _isLetter(l.char)).length;
-    if (!allUsed) break;
-  }
-}
-
-    if (!bestAnchor) {
-      placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: true });
-      usedAnchorPositions.set(placed.length - 1, new Set());
-      return;
-    }
-
-    // Un-separate the anchor if it was floating
-    if (bestAnchor.separated) bestAnchor.separated = false;
-
-    const anchorMergeIdx = bestMerge.myIdx;
-    const myMergeIdx     = bestMerge.theirIdx;
-
-    if (bestAnchor.letters[anchorMergeIdx].type === 'normal') {
-      bestAnchor.letters[anchorMergeIdx] = { ...bestAnchor.letters[anchorMergeIdx], type: 'merge' };
-    }
-    if (letters[myMergeIdx].type === 'normal') {
-      letters[myMergeIdx] = { ...letters[myMergeIdx], type: 'merge' };
-    }
-
-    if (!usedAnchorPositions.has(bestAnchorPlacedIdx)) {
-      usedAnchorPositions.set(bestAnchorPlacedIdx, new Set());
-    }
-    usedAnchorPositions.get(bestAnchorPlacedIdx).add(anchorMergeIdx);
-
-    let gx, gy;
-    if (baseDir === 'h') {
-      const anchorCol = bestAnchor.dir === 'h'
-        ? bestAnchor.gridX + anchorMergeIdx
-        : bestAnchor.gridX;
-      const anchorRow = bestAnchor.dir === 'v'
-        ? bestAnchor.gridY + anchorMergeIdx
-        : bestAnchor.gridY;
-      gx = anchorCol - myMergeIdx;
-      gy = anchorRow;
-    } else {
-      const anchorCol = bestAnchor.dir === 'h'
-        ? bestAnchor.gridX + anchorMergeIdx
-        : bestAnchor.gridX;
-      const anchorRow = bestAnchor.dir === 'v'
-        ? bestAnchor.gridY + anchorMergeIdx
-        : bestAnchor.gridY;
-      gx = anchorCol;
-      gy = anchorRow - myMergeIdx;
-    }
-
-    placed.push({ raw: wordStr, letters, dir: baseDir, gridX: gx, gridY: gy, separated: false });
-    const newWordAnchorUsed = new Set();
-    newWordAnchorUsed.add(myMergeIdx);
-    usedAnchorPositions.set(placed.length - 1, newWordAnchorUsed);
-  });
-
-  return placed;
-}
 
   /* ══════════════════════════════════════════════════════════════
      TILE FACTORY
