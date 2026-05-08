@@ -306,21 +306,26 @@
     let bestAnchor = null, bestMerge = null, bestAnchorPlacedIdx = -1;
 
     for (let pi = placed.length - 1; pi >= 0; pi--) {
-      // The pair-break check: break between word[pi] and word[pi+1] in raw terms.
-      // placed[pi] corresponds to rawWords[pi] (indices match since we push one per word).
-      if (_pairBreaks.has(pi)) break; // hard wall, don't look further back
+  if (_pairBreaks.has(pi)) break;
 
-      const candidate = placed[pi];
-      const anchorUsed = usedAnchorPositions.get(pi) || new Set();
-      const newUsed = usedAnchorPositions.get(placed.length) || new Set();
-      const m = _findMerge(candidate.letters, letters, anchorUsed, newUsed);
-      if (m) {
-        bestAnchor = candidate;
-        bestMerge = m;
-        bestAnchorPlacedIdx = pi;
-        break;
-      }
-    }
+  const candidate = placed[pi];
+  const anchorUsed = usedAnchorPositions.get(pi) || new Set();
+  const newUsed = usedAnchorPositions.get(placed.length) || new Set();
+  const m = _findMerge(candidate.letters, letters, anchorUsed, newUsed);
+  if (m) {
+    bestAnchor = candidate;
+    bestMerge = m;
+    bestAnchorPlacedIdx = pi;
+    break;
+  }
+
+  // Only look further back if the immediate predecessor is completely exhausted.
+  // Prevents jumping over a word and causing overlaps.
+  if (pi === placed.length - 1) {
+    const allUsed = anchorUsed.size >= candidate.letters.filter(l => _isLetter(l.char)).length;
+    if (!allUsed) break;
+  }
+}
 
     if (!bestAnchor) {
       placed.push({ raw: wordStr, letters, dir: baseDir, gridX: 0, gridY: 0, separated: true });
