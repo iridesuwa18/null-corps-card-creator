@@ -1356,7 +1356,7 @@
     const fontPx = fontPt * 3;            // 1pt = 3px at native card resolution
     const lineH  = fontPx * 1.3;
 
-    const isDozer    = (state.cardMode || '') === 'dozer';
+    const isDozer    = (state.cardMode || '') === 'dozer' || (state.cardMode || '') === 'dozer-skill';
     const fillColor  = isDozer ? '#ffffff' : '#000000';
     const outColor   = isDozer ? '#000000' : '#ffffff';
     const outW       = 3;
